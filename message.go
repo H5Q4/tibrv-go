@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"sort"
 	"unsafe"
 )
@@ -61,7 +62,7 @@ func (m *RvMessage) Destroy() error {
 }
 
 // String return a string representation of the message
-func (m RvMessage) String() string {
+func (m *RvMessage) String() string {
 	var buffer *C.char
 	pt := &buffer
 	status := C.tibrvMsg_ConvertToString(m.internal, pt)
@@ -118,7 +119,7 @@ func (m *RvMessage) GetReplySubject() (string, error) {
 }
 
 // GetFields returns a map with field names as keys and field types values
-func (m RvMessage) GetFields() (map[string]uint8, error) {
+func (m *RvMessage) GetFields() (map[string]uint8, error) {
 	fields := make(map[string]uint8)
 
 	n, err := m.GetNumFields()
@@ -143,7 +144,7 @@ func (m RvMessage) GetFields() (map[string]uint8, error) {
 }
 
 // GetNumFields returns the number of fields of the message
-func (m RvMessage) GetNumFields() (uint, error) {
+func (m *RvMessage) GetNumFields() (uint, error) {
 	var n C.uint
 
 	status := C.tibrvMsg_GetNumFields(
@@ -157,10 +158,10 @@ func (m RvMessage) GetNumFields() (uint, error) {
 }
 
 // GetBool read a 8bit integer field
-func (m RvMessage) GetBool(name string) (bool, error) {
+func (m *RvMessage) GetBool(name string) (bool, error) {
 	return m.getBool(name, 0)
 }
-func (m RvMessage) getBool(name string, fieldID FieldID) (bool, error) {
+func (m *RvMessage) getBool(name string, fieldID FieldID) (bool, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.tibrv_bool
@@ -173,10 +174,10 @@ func (m RvMessage) getBool(name string, fieldID FieldID) (bool, error) {
 }
 
 // GetInt8 read a 8bit integer field
-func (m RvMessage) GetInt8(name string) (int8, error) {
+func (m *RvMessage) GetInt8(name string) (int8, error) {
 	return m.getInt8(name, 0)
 }
-func (m RvMessage) getInt8(name string, fieldID FieldID) (int8, error) {
+func (m *RvMessage) getInt8(name string, fieldID FieldID) (int8, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.schar
@@ -189,10 +190,10 @@ func (m RvMessage) getInt8(name string, fieldID FieldID) (int8, error) {
 }
 
 // GetInt16 read a 16bit integer field
-func (m RvMessage) GetInt16(name string) (int16, error) {
+func (m *RvMessage) GetInt16(name string) (int16, error) {
 	return m.getInt16(name, 0)
 }
-func (m RvMessage) getInt16(name string, fieldID FieldID) (int16, error) {
+func (m *RvMessage) getInt16(name string, fieldID FieldID) (int16, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.short
@@ -205,10 +206,10 @@ func (m RvMessage) getInt16(name string, fieldID FieldID) (int16, error) {
 }
 
 // GetInt32 read a 32bit integer field
-func (m RvMessage) GetInt32(name string) (int32, error) {
+func (m *RvMessage) GetInt32(name string) (int32, error) {
 	return m.getInt32(name, 0)
 }
-func (m RvMessage) getInt32(name string, fieldID FieldID) (int32, error) {
+func (m *RvMessage) getInt32(name string, fieldID FieldID) (int32, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.int
@@ -221,10 +222,10 @@ func (m RvMessage) getInt32(name string, fieldID FieldID) (int32, error) {
 }
 
 // GetInt64 read a 64bit integer field
-func (m RvMessage) GetInt64(name string) (int64, error) {
+func (m *RvMessage) GetInt64(name string) (int64, error) {
 	return m.getInt64(name, 0)
 }
-func (m RvMessage) getInt64(name string, fieldID FieldID) (int64, error) {
+func (m *RvMessage) getInt64(name string, fieldID FieldID) (int64, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.longlong
@@ -237,10 +238,10 @@ func (m RvMessage) getInt64(name string, fieldID FieldID) (int64, error) {
 }
 
 // GetUInt8 read a 8bit unsigned integer field
-func (m RvMessage) GetUInt8(name string) (uint8, error) {
+func (m *RvMessage) GetUInt8(name string) (uint8, error) {
 	return m.getUInt8(name, 0)
 }
-func (m RvMessage) getUInt8(name string, fieldID FieldID) (uint8, error) {
+func (m *RvMessage) getUInt8(name string, fieldID FieldID) (uint8, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.uchar
@@ -253,10 +254,10 @@ func (m RvMessage) getUInt8(name string, fieldID FieldID) (uint8, error) {
 }
 
 // GetUInt16 read a 16bit unsigned integer field
-func (m RvMessage) GetUInt16(name string) (uint16, error) {
+func (m *RvMessage) GetUInt16(name string) (uint16, error) {
 	return m.getUInt16(name, 0)
 }
-func (m RvMessage) getUInt16(name string, fieldID FieldID) (uint16, error) {
+func (m *RvMessage) getUInt16(name string, fieldID FieldID) (uint16, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.ushort
@@ -269,10 +270,10 @@ func (m RvMessage) getUInt16(name string, fieldID FieldID) (uint16, error) {
 }
 
 // GetUInt32 read a 32bit unsigned integer field
-func (m RvMessage) GetUInt32(name string) (uint32, error) {
+func (m *RvMessage) GetUInt32(name string) (uint32, error) {
 	return m.getUInt32(name, 0)
 }
-func (m RvMessage) getUInt32(name string, fieldID FieldID) (uint32, error) {
+func (m *RvMessage) getUInt32(name string, fieldID FieldID) (uint32, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.uint
@@ -285,10 +286,10 @@ func (m RvMessage) getUInt32(name string, fieldID FieldID) (uint32, error) {
 }
 
 // GetUInt64 read a 64bit unsigned integer field
-func (m RvMessage) GetUInt64(name string) (uint64, error) {
+func (m *RvMessage) GetUInt64(name string) (uint64, error) {
 	return m.getUInt64(name, 0)
 }
-func (m RvMessage) getUInt64(name string, fieldID FieldID) (uint64, error) {
+func (m *RvMessage) getUInt64(name string, fieldID FieldID) (uint64, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.ulonglong
@@ -441,10 +442,10 @@ func (m *RvMessage) setUInt64(name string, fieldID FieldID, value uint64) error 
 }
 
 // GetFloat32 read a 32bit float field
-func (m RvMessage) GetFloat32(name string) (float32, error) {
+func (m *RvMessage) GetFloat32(name string) (float32, error) {
 	return m.getFloat32(name, 0)
 }
-func (m RvMessage) getFloat32(name string, fieldID FieldID) (float32, error) {
+func (m *RvMessage) getFloat32(name string, fieldID FieldID) (float32, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.float
@@ -472,10 +473,10 @@ func (m *RvMessage) setFloat32(name string, fieldID FieldID, value float32) erro
 }
 
 // GetFloat64 read a 64bit float field
-func (m RvMessage) GetFloat64(name string) (float64, error) {
+func (m *RvMessage) GetFloat64(name string) (float64, error) {
 	return m.getFloat64(name, 0)
 }
-func (m RvMessage) getFloat64(name string, fieldID FieldID) (float64, error) {
+func (m *RvMessage) getFloat64(name string, fieldID FieldID) (float64, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.double
@@ -503,10 +504,10 @@ func (m *RvMessage) setFloat64(name string, fieldID FieldID, value float64) erro
 }
 
 // GetString read a string field
-func (m RvMessage) GetString(name string) (string, error) {
+func (m *RvMessage) GetString(name string) (string, error) {
 	return m.getString(name, 0)
 }
-func (m RvMessage) getString(name string, fieldID FieldID) (string, error) {
+func (m *RvMessage) getString(name string, fieldID FieldID) (string, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv *C.char
@@ -536,10 +537,10 @@ func (m *RvMessage) setString(name string, fieldID FieldID, value string) error 
 }
 
 // GetStringArray read a string array field
-func (m RvMessage) GetStringArray(name string) ([]string, error) {
+func (m *RvMessage) GetStringArray(name string) ([]string, error) {
 	return m.getStringArray(name, 0)
 }
-func (m RvMessage) getStringArray(name string, fieldID FieldID) ([]string, error) {
+func (m *RvMessage) getStringArray(name string, fieldID FieldID) ([]string, error) {
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
@@ -605,10 +606,10 @@ func (m *RvMessage) setStringArray(name string, fieldID FieldID, value []string)
 }
 
 // GetRvMessage read a nested message
-func (m RvMessage) GetRvMessage(name string) (RvMessage, error) {
+func (m *RvMessage) GetRvMessage(name string) (RvMessage, error) {
 	return m.getRvMessage(name, 0)
 }
-func (m RvMessage) getRvMessage(name string, fieldID FieldID) (RvMessage, error) {
+func (m *RvMessage) getRvMessage(name string, fieldID FieldID) (RvMessage, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 	var cv C.tibrvMsg
@@ -651,10 +652,10 @@ func arrayItemPositionPointer(base uintptr, index uintptr, itemSize uintptr) uns
 }
 
 // GetInt8Array read a 8bit integer array field
-func (m RvMessage) GetInt8Array(name string) ([]int8, error) {
+func (m *RvMessage) GetInt8Array(name string) ([]int8, error) {
 	return m.getInt8Array(name, 0)
 }
-func (m RvMessage) getInt8Array(name string, fieldID FieldID) ([]int8, error) {
+func (m *RvMessage) getInt8Array(name string, fieldID FieldID) ([]int8, error) {
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
@@ -711,10 +712,10 @@ func (m *RvMessage) setInt8Array(name string, fieldID FieldID, value []int8) err
 }
 
 // GetInt16Array read a 16bit integer array field
-func (m RvMessage) GetInt16Array(name string) ([]int16, error) {
+func (m *RvMessage) GetInt16Array(name string) ([]int16, error) {
 	return m.getInt16Array(name, 0)
 }
-func (m RvMessage) getInt16Array(name string, fieldID FieldID) ([]int16, error) {
+func (m *RvMessage) getInt16Array(name string, fieldID FieldID) ([]int16, error) {
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
@@ -771,10 +772,10 @@ func (m *RvMessage) setInt16Array(name string, fieldID FieldID, value []int16) e
 }
 
 // GetInt32Array read a 32bit integer array field
-func (m RvMessage) GetInt32Array(name string) ([]int32, error) {
+func (m *RvMessage) GetInt32Array(name string) ([]int32, error) {
 	return m.getInt32Array(name, 0)
 }
-func (m RvMessage) getInt32Array(name string, fieldID FieldID) ([]int32, error) {
+func (m *RvMessage) getInt32Array(name string, fieldID FieldID) ([]int32, error) {
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
@@ -831,10 +832,10 @@ func (m *RvMessage) setInt32Array(name string, fieldID FieldID, value []int32) e
 }
 
 // GetInt64Array read a 64bit integer array field
-func (m RvMessage) GetInt64Array(name string) ([]int64, error) {
+func (m *RvMessage) GetInt64Array(name string) ([]int64, error) {
 	return m.getInt64Array(name, 0)
 }
-func (m RvMessage) getInt64Array(name string, fieldID FieldID) ([]int64, error) {
+func (m *RvMessage) getInt64Array(name string, fieldID FieldID) ([]int64, error) {
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
@@ -891,10 +892,10 @@ func (m *RvMessage) setInt64Array(name string, fieldID FieldID, value []int64) e
 }
 
 // GetUInt8Array read a 8bit integer array field
-func (m RvMessage) GetUInt8Array(name string) ([]uint8, error) {
+func (m *RvMessage) GetUInt8Array(name string) ([]uint8, error) {
 	return m.getUInt8Array(name, 0)
 }
-func (m RvMessage) getUInt8Array(name string, fieldID FieldID) ([]uint8, error) {
+func (m *RvMessage) getUInt8Array(name string, fieldID FieldID) ([]uint8, error) {
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
@@ -950,10 +951,10 @@ func (m *RvMessage) setUInt8Array(name string, fieldID FieldID, value []uint8) e
 }
 
 // GetUInt16Array read a 16bit integer array field
-func (m RvMessage) GetUInt16Array(name string) ([]uint16, error) {
+func (m *RvMessage) GetUInt16Array(name string) ([]uint16, error) {
 	return m.getUInt16Array(name, 0)
 }
-func (m RvMessage) getUInt16Array(name string, fieldID FieldID) ([]uint16, error) {
+func (m *RvMessage) getUInt16Array(name string, fieldID FieldID) ([]uint16, error) {
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
@@ -1009,10 +1010,10 @@ func (m *RvMessage) setUInt16Array(name string, fieldID FieldID, value []uint16)
 }
 
 // GetUInt32Array read a 32bit integer array field
-func (m RvMessage) GetUInt32Array(name string) ([]uint32, error) {
+func (m *RvMessage) GetUInt32Array(name string) ([]uint32, error) {
 	return m.getUInt32Array(name, 0)
 }
-func (m RvMessage) getUInt32Array(name string, fieldID FieldID) ([]uint32, error) {
+func (m *RvMessage) getUInt32Array(name string, fieldID FieldID) ([]uint32, error) {
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
@@ -1047,7 +1048,7 @@ func (m *RvMessage) setUInt32Array(name string, fieldID FieldID, value []uint32)
 	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
 	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
 
-	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+	for i, j, l := uintptr(0), 0, uintptr(arrayLen); i < l; i++ {
 		// pointer arithmetics inside this function
 		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
@@ -1068,10 +1069,10 @@ func (m *RvMessage) setUInt32Array(name string, fieldID FieldID, value []uint32)
 }
 
 // GetUInt64Array read a 64bit integer array field
-func (m RvMessage) GetUInt64Array(name string) ([]uint64, error) {
+func (m *RvMessage) GetUInt64Array(name string) ([]uint64, error) {
 	return m.getUInt64Array(name, 0)
 }
-func (m RvMessage) getUInt64Array(name string, fieldID FieldID) ([]uint64, error) {
+func (m *RvMessage) getUInt64Array(name string, fieldID FieldID) ([]uint64, error) {
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
@@ -1127,10 +1128,10 @@ func (m *RvMessage) setUInt64Array(name string, fieldID FieldID, value []uint64)
 }
 
 // GetFloat32Array read a 32bit float array field
-func (m RvMessage) GetFloat32Array(name string) ([]float32, error) {
+func (m *RvMessage) GetFloat32Array(name string) ([]float32, error) {
 	return m.getFloat32Array(name, 0)
 }
-func (m RvMessage) getFloat32Array(name string, fieldID FieldID) ([]float32, error) {
+func (m *RvMessage) getFloat32Array(name string, fieldID FieldID) ([]float32, error) {
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
@@ -1165,7 +1166,7 @@ func (m *RvMessage) setFloat32Array(name string, fieldID FieldID, value []float3
 	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
 	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
 
-	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+	for i, j, l := uintptr(0), 0, uintptr(arrayLen); i < l; i++ {
 		// pointer arithmetics inside this function
 		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
@@ -1186,10 +1187,10 @@ func (m *RvMessage) setFloat32Array(name string, fieldID FieldID, value []float3
 }
 
 // GetFloat64Array read a 64bit float array field
-func (m RvMessage) GetFloat64Array(name string) ([]float64, error) {
+func (m *RvMessage) GetFloat64Array(name string) ([]float64, error) {
 	return m.getFloat64Array(name, 0)
 }
-func (m RvMessage) getFloat64Array(name string, fieldID FieldID) ([]float64, error) {
+func (m *RvMessage) getFloat64Array(name string, fieldID FieldID) ([]float64, error) {
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
@@ -1203,7 +1204,7 @@ func (m RvMessage) getFloat64Array(name string, fieldID FieldID) ([]float64, err
 	// convert to slice
 	result := make([]float64, uint(arrayLen))
 
-	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
+	for i, l := uintptr(0), uintptr(arrayLen); i < l; i++ {
 		// pointer arithmetics inside this function
 		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
@@ -1224,7 +1225,7 @@ func (m *RvMessage) setFloat64Array(name string, fieldID FieldID, value []float6
 	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
 	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
 
-	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
+	for i, j, l := uintptr(0), 0, uintptr(arrayLen); i < l; i++ {
 		// pointer arithmetics inside this function
 		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
@@ -1238,6 +1239,42 @@ func (m *RvMessage) setFloat64Array(name string, fieldID FieldID, value []float6
 		C.uint(arrayLen),
 		C.ushort(fieldID),
 	)
+	if status != C.TIBRV_OK {
+		return NewRvError(status)
+	}
+	return nil
+}
+
+// GetXML read a XML field
+func (m *RvMessage) GetXML(name string) ([]byte, error) {
+	return m.getXML(name, 0)
+}
+func (m *RvMessage) getXML(name string, fieldID FieldID) ([]byte, error) {
+	cn := C.CString(name)
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
+	var l C.uint
+	var v *C.uint
+	p := unsafe.Pointer(v)
+
+	status := C.tibrvMsg_GetXmlEx(m.internal, cn, &p, &l, C.ushort(fieldID))
+	if status != C.TIBRV_OK {
+		return nil, NewRvError(status)
+	}
+	return C.GoBytes(p, C.int(l)), nil
+}
+
+// SetXML add a XML field
+func (m *RvMessage) SetXML(name string, value []byte) error {
+	return m.setXML(name, 0, value)
+}
+func (m *RvMessage) setXML(name string, fieldID FieldID, value []byte) error {
+	cn := C.CString(name)
+	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
+	arrayLen := len(value)
+	cv := C.CBytes(value)
+	defer C.free(cv)
+
+	status := C.tibrvMsg_UpdateXmlEx(m.internal, cn, cv, C.uint(arrayLen), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
 		return NewRvError(status)
 	}
@@ -1259,7 +1296,7 @@ func (m *RvMessage) removeField(name string, fieldID FieldID) error {
 }
 
 // JSON returns a json string representation of the message
-func (m RvMessage) JSON() (string, error) {
+func (m *RvMessage) JSON() (string, error) {
 
 	fieldList, err := m.GetFields()
 	if err != nil {
@@ -1267,244 +1304,428 @@ func (m RvMessage) JSON() (string, error) {
 	}
 	var buffer string
 	result := bytes.NewBufferString(buffer)
-	fmt.Fprint(result, "{")
+	_, err = fmt.Fprint(result, "{")
+	if err != nil {
+		return "", err
+	}
 
 	i := 0
 	for fieldName, fieldType := range fieldList {
 		if i > 0 {
-			fmt.Fprint(result, ", ")
+			_, err := fmt.Fprint(result, ", ")
+			if err != nil {
+				return "", err
+			}
 		}
 		if FieldTypeMsg == fieldType {
 			fieldValue, err := m.GetRvMessage(fieldName)
 			if err != nil {
 				return "", err
 			}
-			defer fieldValue.Destroy()
 
 			fieldValueText, err := fieldValue.JSON()
+			if err == nil {
+				_, err = fmt.Fprintf(result, "\"%s\": %s", fieldName, fieldValueText)
+			}
+
 			if err != nil {
 				return "", err
+			} else {
+				err := fieldValue.Destroy()
+				if err != nil {
+					slog.Error("Error destroying message", "message", fieldValue, "error", err)
+				}
 			}
-			fmt.Fprintf(result, "\"%s\": %s", fieldName, fieldValueText)
 		} else if FieldTypeString == fieldType {
 			fieldValue, err := m.GetString(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": \"%s\"", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": \"%s\"", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeBool == fieldType {
 			fieldValue, err := m.GetBool(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %v", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": %v", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeInt8 == fieldType {
 			fieldValue, err := m.GetInt8(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeUInt8 == fieldType {
 			fieldValue, err := m.GetUInt8(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeInt16 == fieldType {
 			fieldValue, err := m.GetInt16(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeUInt16 == fieldType {
 			fieldValue, err := m.GetUInt16(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeInt32 == fieldType {
 			fieldValue, err := m.GetInt32(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeUInt32 == fieldType {
 			fieldValue, err := m.GetUInt32(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeInt64 == fieldType {
 			fieldValue, err := m.GetInt64(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeUInt64 == fieldType {
 			fieldValue, err := m.GetUInt64(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": %d", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeFloat32 == fieldType {
 			fieldValue, err := m.GetFloat32(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %f", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": %f", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeFloat64 == fieldType {
 			fieldValue, err := m.GetFloat64(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": %f", fieldName, fieldValue)
+			_, err = fmt.Fprintf(result, "\"%s\": %f", fieldName, fieldValue)
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeStringArray == fieldType {
 			fieldValue, err := m.GetStringArray(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			_, err = fmt.Fprintf(result, "\"%s\": [", fieldName)
+			if err != nil {
+				return "", err
+			}
 			for j, v := range fieldValue {
 				if j > 0 {
-					fmt.Fprintf(result, ", ")
+					_, err := fmt.Fprintf(result, ", ")
+					if err != nil {
+						return "", err
+					}
 				}
-				fmt.Fprintf(result, "\"%s\"", v)
+				_, err := fmt.Fprintf(result, "\"%s\"", v)
+				if err != nil {
+					return "", err
+				}
 			}
-			fmt.Fprint(result, "]")
+			_, err = fmt.Fprint(result, "]")
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeInt8Array == fieldType {
 			fieldValue, err := m.GetInt8Array(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			_, err = fmt.Fprintf(result, "\"%s\": [", fieldName)
+			if err != nil {
+				return "", err
+			}
 			for j, v := range fieldValue {
 				if j > 0 {
-					fmt.Fprintf(result, ", ")
+					_, err = fmt.Fprintf(result, ", ")
+					if err != nil {
+						return "", err
+					}
 				}
-				fmt.Fprintf(result, "%d", v)
+				_, err = fmt.Fprintf(result, "%d", v)
+				if err != nil {
+					return "", err
+				}
 			}
-			fmt.Fprint(result, "]")
+			_, err = fmt.Fprint(result, "]")
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeUInt8Array == fieldType {
 			fieldValue, err := m.GetUInt8Array(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			_, err = fmt.Fprintf(result, "\"%s\": [", fieldName)
+			if err != nil {
+				return "", err
+			}
 			for j, v := range fieldValue {
 				if j > 0 {
-					fmt.Fprintf(result, ", ")
+					_, err = fmt.Fprintf(result, ", ")
+					if err != nil {
+						return "", err
+					}
 				}
-				fmt.Fprintf(result, "%d", v)
+				_, err = fmt.Fprintf(result, "%d", v)
+				if err != nil {
+					return "", err
+				}
 			}
-			fmt.Fprint(result, "]")
+			_, err = fmt.Fprint(result, "]")
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeInt16Array == fieldType {
 			fieldValue, err := m.GetInt16Array(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			_, err = fmt.Fprintf(result, "\"%s\": [", fieldName)
+			if err != nil {
+				return "", err
+			}
 			for j, v := range fieldValue {
 				if j > 0 {
-					fmt.Fprintf(result, ", ")
+					_, err = fmt.Fprintf(result, ", ")
+					if err != nil {
+						return "", err
+					}
 				}
-				fmt.Fprintf(result, "%d", v)
+				_, err = fmt.Fprintf(result, "%d", v)
+				if err != nil {
+					return "", err
+				}
 			}
-			fmt.Fprint(result, "]")
+			_, err = fmt.Fprint(result, "]")
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeUInt16Array == fieldType {
 			fieldValue, err := m.GetUInt16Array(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			_, err = fmt.Fprintf(result, "\"%s\": [", fieldName)
+			if err != nil {
+				return "", err
+			}
 			for j, v := range fieldValue {
 				if j > 0 {
-					fmt.Fprintf(result, ", ")
+					_, err = fmt.Fprintf(result, ", ")
+					if err != nil {
+						return "", err
+					}
 				}
-				fmt.Fprintf(result, "%d", v)
+				_, err = fmt.Fprintf(result, "%d", v)
+				if err != nil {
+					return "", err
+				}
 			}
-			fmt.Fprint(result, "]")
+			_, err = fmt.Fprint(result, "]")
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeInt32Array == fieldType {
 			fieldValue, err := m.GetInt32Array(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			_, err = fmt.Fprintf(result, "\"%s\": [", fieldName)
+			if err != nil {
+				return "", err
+			}
 			for j, v := range fieldValue {
 				if j > 0 {
-					fmt.Fprintf(result, ", ")
+					_, err = fmt.Fprintf(result, ", ")
+					if err != nil {
+						return "", err
+					}
 				}
-				fmt.Fprintf(result, "%d", v)
+				_, err = fmt.Fprintf(result, "%d", v)
+				if err != nil {
+					return "", err
+				}
 			}
-			fmt.Fprint(result, "]")
+			_, err = fmt.Fprint(result, "]")
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeUInt32Array == fieldType {
 			fieldValue, err := m.GetUInt32Array(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			_, err = fmt.Fprintf(result, "\"%s\": [", fieldName)
+			if err != nil {
+				return "", err
+			}
 			for j, v := range fieldValue {
 				if j > 0 {
-					fmt.Fprintf(result, ", ")
+					_, err = fmt.Fprintf(result, ", ")
+					if err != nil {
+						return "", err
+					}
 				}
-				fmt.Fprintf(result, "%d", v)
+				_, err = fmt.Fprintf(result, "%d", v)
+				if err != nil {
+					return "", err
+				}
 			}
-			fmt.Fprint(result, "]")
+			_, err = fmt.Fprint(result, "]")
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeInt64Array == fieldType {
 			fieldValue, err := m.GetInt64Array(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			_, err = fmt.Fprintf(result, "\"%s\": [", fieldName)
+			if err != nil {
+				return "", err
+			}
 			for j, v := range fieldValue {
 				if j > 0 {
-					fmt.Fprintf(result, ", ")
+					_, err = fmt.Fprintf(result, ", ")
+					if err != nil {
+						return "", err
+					}
 				}
-				fmt.Fprintf(result, "%d", v)
+				_, err = fmt.Fprintf(result, "%d", v)
+				if err != nil {
+					return "", err
+				}
 			}
-			fmt.Fprint(result, "]")
+			_, err = fmt.Fprint(result, "]")
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeUInt64Array == fieldType {
 			fieldValue, err := m.GetUInt64Array(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			_, err = fmt.Fprintf(result, "\"%s\": [", fieldName)
+			if err != nil {
+				return "", err
+			}
 			for j, v := range fieldValue {
 				if j > 0 {
-					fmt.Fprintf(result, ", ")
+					_, err = fmt.Fprintf(result, ", ")
+					if err != nil {
+						return "", err
+					}
 				}
-				fmt.Fprintf(result, "%d", v)
+				_, err = fmt.Fprintf(result, "%d", v)
+				if err != nil {
+					return "", err
+				}
 			}
-			fmt.Fprint(result, "]")
+			_, err = fmt.Fprint(result, "]")
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeFloat32Array == fieldType {
 			fieldValue, err := m.GetFloat32Array(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			_, err = fmt.Fprintf(result, "\"%s\": [", fieldName)
+			if err != nil {
+				return "", err
+			}
 			for j, v := range fieldValue {
 				if j > 0 {
-					fmt.Fprintf(result, ", ")
+					_, err = fmt.Fprintf(result, ", ")
+					if err != nil {
+						return "", err
+					}
 				}
-				fmt.Fprintf(result, "%f", v)
+				_, err = fmt.Fprintf(result, "%f", v)
+				if err != nil {
+					return "", err
+				}
 			}
-			fmt.Fprint(result, "]")
+			_, err = fmt.Fprint(result, "]")
+			if err != nil {
+				return "", err
+			}
 		} else if FieldTypeFloat64Array == fieldType {
 			fieldValue, err := m.GetFloat64Array(fieldName)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(result, "\"%s\": [", fieldName)
+			_, err = fmt.Fprintf(result, "\"%s\": [", fieldName)
+			if err != nil {
+				return "", err
+			}
 			for j, v := range fieldValue {
 				if j > 0 {
-					fmt.Fprintf(result, ", ")
+					_, err = fmt.Fprintf(result, ", ")
+					if err != nil {
+						return "", err
+					}
 				}
-				fmt.Fprintf(result, "%f", v)
+				_, err = fmt.Fprintf(result, "%f", v)
+				if err != nil {
+					return "", err
+				}
 			}
-			fmt.Fprint(result, "]")
+			_, err = fmt.Fprint(result, "]")
+			if err != nil {
+				return "", err
+			}
 		}
 		i++
 	}
-	fmt.Fprint(result, "}")
+	_, err = fmt.Fprint(result, "}")
+	if err != nil {
+		return "", err
+	}
 	return result.String(), nil
 }
 

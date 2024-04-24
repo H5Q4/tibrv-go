@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/julio77it/tibrv"
+	"github.com/H5Q4/tibrv-go"
 )
 
 func main() {

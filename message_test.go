@@ -2,6 +2,7 @@ package tibrv
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"os"
 	"reflect"
 	"testing"
@@ -818,6 +819,34 @@ func TestRvMessageFloat64Array(t *testing.T) {
 		t.Fatalf("Expected %v, got %v", in, out)
 	}
 	_, err = msg.GetFloat64Array(name + name)
+	if err == nil {
+		t.Fatalf("Expected ERR, got nil")
+	}
+}
+
+func TestRvMessageXML(t *testing.T) {
+	var msg RvMessage
+
+	name := "fieldName"
+	x := "<xml><tag>value</tag></xml>"
+	in, _ := xml.Marshal(x)
+
+	msg.Create()
+	defer msg.Destroy()
+
+	err := msg.SetXML(name, in)
+	if err != nil {
+		t.Fatalf("Expected nil, got %v", err)
+	}
+
+	out, err := msg.GetXML(name)
+	if err != nil {
+		t.Fatalf("Expected %v, got %v", in, err)
+	}
+	if !reflect.DeepEqual(out, in) {
+		t.Fatalf("Expected %v, got %v", in, out)
+	}
+	_, err = msg.GetXML(name + name)
 	if err == nil {
 		t.Fatalf("Expected ERR, got nil")
 	}

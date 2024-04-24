@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/julio77it/tibrv"
+	"github.com/H5Q4/tibrv-go"
 	"log"
 	"time"
 )

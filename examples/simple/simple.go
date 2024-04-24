@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/julio77it/tibrv"
+	"github.com/H5Q4/tibrv-go"
 )
 
 func main() {
@@ -60,7 +60,7 @@ func main() {
 	var listener tibrv.RvListener
 
 	cb := func(m *tibrv.RvMessage) {
-		fmt.Println("RvMessage:", *m)
+		fmt.Printf("RvMessage: %v\n", m)
 	}
 
 	if err := listener.Create(queue, cb, transport, "PROVA.1"); err != nil {
