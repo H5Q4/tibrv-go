@@ -3,6 +3,7 @@ package tibrv
 /*
 #include <tibrv/tibrv.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <malloc.h>
 */
 import "C"
@@ -292,7 +293,7 @@ func (m *RvMessage) GetUInt64(name string) (uint64, error) {
 func (m *RvMessage) getUInt64(name string, fieldID FieldID) (uint64, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
-	var cv C.ulonglong
+	var cv C.uint64_t
 
 	status := C.tibrvMsg_GetU64Ex(m.internal, cn, &cv, C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -434,7 +435,7 @@ func (m *RvMessage) setUInt64(name string, fieldID FieldID, value uint64) error 
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
-	status := C.tibrvMsg_UpdateU64Ex(m.internal, cn, C.ulonglong(value), C.ushort(fieldID))
+	status := C.tibrvMsg_UpdateU64Ex(m.internal, cn, C.uint64_t(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
 		return NewRvError(status)
 	}
@@ -573,8 +574,8 @@ func (m *RvMessage) setStringArray(name string, fieldID FieldID, value []string)
 
 	var sizer *C.char
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(sizer)))) //#nosec G103 -- unsafe needed by CGO
-	defer C.free(unsafe.Pointer(arrayValues))                                  //#nosec G103 -- unsafe needed by CGO
+	arrayValues := C.malloc(C.uint64_t(arrayLen * int(unsafe.Sizeof(sizer)))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                 //#nosec G103 -- unsafe needed by CGO
 
 	for i, len := uintptr(0), uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
@@ -687,8 +688,8 @@ func (m *RvMessage) setInt8Array(name string, fieldID FieldID, value []int8) err
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
-	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
+	arrayValues := C.malloc(C.uint64_t(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                    //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
@@ -747,8 +748,8 @@ func (m *RvMessage) setInt16Array(name string, fieldID FieldID, value []int16) e
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
-	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
+	arrayValues := C.malloc(C.uint64_t(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                    //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
@@ -807,8 +808,8 @@ func (m *RvMessage) setInt32Array(name string, fieldID FieldID, value []int32) e
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
-	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
+	arrayValues := C.malloc(C.uint64_t(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                    //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
@@ -867,8 +868,8 @@ func (m *RvMessage) setInt64Array(name string, fieldID FieldID, value []int64) e
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
-	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
+	arrayValues := C.malloc(C.uint64_t(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                    //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
@@ -927,8 +928,8 @@ func (m *RvMessage) setUInt8Array(name string, fieldID FieldID, value []uint8) e
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
-	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
+	arrayValues := C.malloc(C.uint64_t(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                    //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
@@ -986,8 +987,8 @@ func (m *RvMessage) setUInt16Array(name string, fieldID FieldID, value []uint16)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
-	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
+	arrayValues := C.malloc(C.uint64_t(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                    //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
@@ -1045,8 +1046,8 @@ func (m *RvMessage) setUInt32Array(name string, fieldID FieldID, value []uint32)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
-	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
+	arrayValues := C.malloc(C.uint64_t(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                    //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, l := uintptr(0), 0, uintptr(arrayLen); i < l; i++ {
 		// pointer arithmetics inside this function
@@ -1076,7 +1077,7 @@ func (m *RvMessage) getUInt64Array(name string, fieldID FieldID) ([]uint64, erro
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
-	var arrayValues *C.ulonglong
+	var arrayValues *C.uint64_t
 	var arrayLen C.uint
 
 	status := C.tibrvMsg_GetU64ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
@@ -1090,7 +1091,7 @@ func (m *RvMessage) getUInt64Array(name string, fieldID FieldID) ([]uint64, erro
 		// pointer arithmetics inside this function
 		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(*arrayValues)) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from bytes to slice position
-		result[i] = uint64(*(*C.ulonglong)(itemPointer))
+		result[i] = uint64(*(*C.uint64_t)(itemPointer))
 	}
 	return result, nil
 }
@@ -1104,20 +1105,20 @@ func (m *RvMessage) setUInt64Array(name string, fieldID FieldID, value []uint64)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
-	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
+	arrayValues := C.malloc(C.uint64_t(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                    //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, len := uintptr(0), 0, uintptr(arrayLen); i < len; i++ {
 		// pointer arithmetics inside this function
 		itemPointer := arrayItemPositionPointer(uintptr(unsafe.Pointer(arrayValues)), i, unsafe.Sizeof(value[0])) //#nosec G103 -- unsafe needed by CGO
 		// cast & conversion from slice position to bytes
-		*(*C.ulonglong)(unsafe.Pointer(itemPointer)) = C.ulonglong(value[j]) //#nosec G103 -- unsafe needed by CGO
+		*(*C.uint64_t)(unsafe.Pointer(itemPointer)) = C.uint64_t(value[j]) //#nosec G103 -- unsafe needed by CGO
 		j++
 	}
 	status := C.tibrvMsg_UpdateU64ArrayEx(
 		m.internal,
 		arrayName,
-		(*C.ulonglong)(arrayValues),
+		(*C.uint64_t)(arrayValues),
 		C.uint(arrayLen),
 		C.ushort(fieldID),
 	)
@@ -1163,8 +1164,8 @@ func (m *RvMessage) setFloat32Array(name string, fieldID FieldID, value []float3
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
-	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
+	arrayValues := C.malloc(C.uint64_t(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                    //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, l := uintptr(0), 0, uintptr(arrayLen); i < l; i++ {
 		// pointer arithmetics inside this function
@@ -1222,8 +1223,8 @@ func (m *RvMessage) setFloat64Array(name string, fieldID FieldID, value []float6
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
 	arrayLen := len(value)
-	arrayValues := C.malloc(C.ulonglong(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
-	defer C.free(unsafe.Pointer(arrayValues))                                     //#nosec G103 -- unsafe needed by CGO
+	arrayValues := C.malloc(C.uint64_t(arrayLen * int(unsafe.Sizeof(value[0])))) //#nosec G103 -- unsafe needed by CGO
+	defer C.free(unsafe.Pointer(arrayValues))                                    //#nosec G103 -- unsafe needed by CGO
 
 	for i, j, l := uintptr(0), 0, uintptr(arrayLen); i < l; i++ {
 		// pointer arithmetics inside this function
