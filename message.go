@@ -293,7 +293,7 @@ func (m *RvMessage) GetUInt64(name string) (uint64, error) {
 func (m *RvMessage) getUInt64(name string, fieldID FieldID) (uint64, error) {
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
-	var cv C.uint64_t
+	var cv C.ulonglong
 
 	status := C.tibrvMsg_GetU64Ex(m.internal, cn, &cv, C.ushort(fieldID))
 	if status != C.TIBRV_OK {
@@ -435,7 +435,7 @@ func (m *RvMessage) setUInt64(name string, fieldID FieldID, value uint64) error 
 	cn := C.CString(name)
 	defer C.free(unsafe.Pointer(cn)) //#nosec G103 -- unsafe needed by CGO
 
-	status := C.tibrvMsg_UpdateU64Ex(m.internal, cn, C.uint64_t(value), C.ushort(fieldID))
+	status := C.tibrvMsg_UpdateU64Ex(m.internal, cn, C.ulonglong(value), C.ushort(fieldID))
 	if status != C.TIBRV_OK {
 		return NewRvError(status)
 	}
@@ -1077,7 +1077,7 @@ func (m *RvMessage) getUInt64Array(name string, fieldID FieldID) ([]uint64, erro
 	arrayName := C.CString(name)
 	defer C.free(unsafe.Pointer(arrayName)) //#nosec G103 -- unsafe needed by CGO
 
-	var arrayValues *C.uint64_t
+	var arrayValues *C.ulonglong
 	var arrayLen C.uint
 
 	status := C.tibrvMsg_GetU64ArrayEx(m.internal, arrayName, &arrayValues, &arrayLen, C.ushort(fieldID))
@@ -1118,7 +1118,7 @@ func (m *RvMessage) setUInt64Array(name string, fieldID FieldID, value []uint64)
 	status := C.tibrvMsg_UpdateU64ArrayEx(
 		m.internal,
 		arrayName,
-		(*C.uint64_t)(arrayValues),
+		(*C.ulonglong)(arrayValues),
 		C.uint(arrayLen),
 		C.ushort(fieldID),
 	)
