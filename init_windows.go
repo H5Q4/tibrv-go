@@ -1,3 +1,6 @@
+//go:build windows
+// +build windows
+
 package tibrv
 
 /*
@@ -6,10 +9,7 @@ package tibrv
 */
 
 /*
-//DYNAMIC RV LINKAGE
 #cgo LDFLAGS: -ltibrvcm -ltibrvcmq -ltibrvft -ltibrv
-//STATIC RV LINKAGE
-#cgo LDFLAGS: -Wl,-Bstatic -ltibrvcm -ltibrvcmq -ltibrvft -ltibrv -Wl,-Bdynamic
 #include <tibrv/tibrv.h>
 */
 import "C"
